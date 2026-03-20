@@ -1,0 +1,337 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+          rel="stylesheet" />
+    <!--Import materialize.css-->
+    <link type="text/css"
+          rel="stylesheet"
+          href="~/vendor/materialize/css/materialize.min.css"
+          media="screen,projection" />
+
+    <link type="text/css"
+          rel="stylesheet"
+          href="~/css/custom.css"
+          media="screen,projection" />
+
+    <!--Let browser know website is optimized for mobile-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>API Consume</title>
+</head>
+<body>
+
+    @RenderBody()
+
+    <!--JavaScript at end of body for optimized loading-->
+    <script type="text/javascript"
+            src="~/vendor/jQuery/jquery.3.3.1.js"></script>
+    <script type="text/javascript"
+            src="~/vendor/materialize/js/materialize.min.js"></script>
+    <script type="text/javascript"
+            src="~/vendor/jquery.validate/jquery.validate.js"></script>
+    <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+    <script>
+
+        $(document).ready(function() {
+            $("textarea#textarea1").characterCounter();
+            $("select").formSelect();
+            $(".tabs").tabs();
+
+        });
+
+        $(document).on("click", "li a", function() {
+            if ($(this).hasClass("active")) {
+            $("#regform")
+                .get()[0]
+                .reset();
+            $("#valform")
+                .get()[0]
+                .reset();
+            }
+        });
+
+        //credits
+        $("#request_credits").on("click", e => {
+            $(e.currentTarget).addClass("disabled");
+            var apikey = $("#api").val();
+
+            if ( apikey.trim() == "") {
+            swal({
+            title: "Advertencia",
+            text:
+                "Debes introducir tu ApiKey para poder enviar mensajes",
+            icon: "warning"
+            });
+                $("#request_credits").removeClass("disabled");
+            return;
+            }
+
+            $.ajax({
+                url: "@Html.Raw(@Url.Action("Credits", "sms"))",
+                data: {
+                    action_cmd: "credits",
+                    apikey: apikey
+                },
+            type: "POST",
+                success: res => {
+                    console.log(res);
+                    $("#request_credits").removeClass("disabled");
+                    res = JSON.parse(res);
+                if (res.success == true) {
+                $("#apiform")
+                    .get()[0]
+                    .reset();
+                swal({
+                    title: "Mensaje",
+                    text: "Cr\u00E9ditos disponibles:  " + res.credit,
+                    icon: "info"
+                });
+                } else {
+                $("#apiform")
+                    .get()[0]
+                    .reset();
+                swal({
+                    title: "Información no Disponible",
+                    text: "",
+                    icon: "warning"
+                });
+                }
+            }
+            });
+        });
+
+        //send
+        $("#apiform").validate({
+            rules: {
+            destination: {
+                required: true,
+                minlength: 10
+            },
+            content: {
+                required: true,
+                maxlength: 160
+            }
+            },
+            messages: {
+            destination: {
+                required: "Requerido",
+                minlength: "M\u00EDnimo 10 d\u00EDgitos"
+            },
+            content: {
+                required: "Requerido",
+                maxlength: "No puede exceder 160 caracteres"
+            }
+            },
+            errorElement: "span",
+            errorPlacement: function(error, element) {
+            var placement = $(element).data("error");
+            if (placement) {
+                $(placement).append(error);
+            } else {
+                error.insertAfter(element);
+            }
+            },
+            submitHandler: function() {
+            var apikey = $("#api").val();
+            var nombre = $("#nombre").val();
+            var sandbox = "";
+
+            if ($("#sandbox:checked").length) {
+                sandbox = 1;
+            } else {
+                sandbox = 0;
+            }
+
+            if (apikey.trim() == "") {
+                swal({
+                title: "Advertencia",
+                text:
+                    "Debes introducir tu ApiKey para poder enviar mensajes",
+                icon: "warning"
+                });
+                return;
+            }
+
+            let this_c = $("#country option:selected").text();
+            let this_dest = $("#destination").val();
+            let this_texto = $("#textarea1").val();
+
+
+            $.ajax({
+
+                url: "@Html.Raw(@Url.Action("Send", "sms"))",
+                data: {
+                    action_cmd: "send",
+                    apikey: apikey,
+                    c: this_c,
+                    dest: this_dest,
+                    texto: this_texto,
+                    sand: sandbox,
+                    nombre: nombre
+                },
+                method: "post",
+                success: res => {
+
+                res = JSON.parse(res);
+
+                $("#apiform")
+                    .get()[0]
+                    .reset();
+
+                swal({
+                    title: "Mensaje",
+                    text: res.message,
+                    icon: "info"
+                });
+                }
+
+            });
+            }
+        });
+
+        //2faregister
+        $("#regform").validate({
+            rules: {
+            destination: {
+                required: true,
+                minlength: 10
+            }
+            },
+            messages: {
+            destination: {
+                required: "Requerido",
+                minlength: "M\u00EDnimo 10 d\u00EDgitos"
+            }
+            },
+            errorElement: "span",
+            errorPlacement: function(error, element) {
+            var placement = $(element).data("error");
+            if (placement) {
+                $(placement).append(error);
+            } else {
+                error.insertAfter(element);
+            }
+            },
+            submitHandler: function() {
+            var apikey = $("#api").val();
+            var nombre = $("#nombre").val();
+            var digitos = $("input[name=group1]:checked").val();
+            var formato = $("input[name=group2]:checked").val();
+            var this_c = $("#country option:selected").text();
+            var this_dest = $("#destination").val();
+
+            if (apikey.trim() == "") {
+                swal({
+                title: "Advertencia",
+                text:
+                    "Debes introducir tu ApiKey para poder enviar mensajes",
+                icon: "warning"
+                });
+                return;
+            }
+
+            $.ajax({
+                url: "@Html.Raw(@Url.Action("Register", "sms"))",
+                data: {
+                    action_cmd: "2fa_register",
+                    apikey: apikey,
+                    nombre: nombre,
+                    c: this_c,
+                    dest: this_dest,
+                    digitos: digitos,
+                    formato: formato
+                },
+                method: "post",
+                success: res => {
+
+                $("#regform")
+                    .get()[0]
+                    .reset();
+                swal({
+                    title: "Mensaje",
+                    text: res,
+                    icon: "info"
+                });
+                }
+            });
+            }
+        });
+
+        //2faverification
+        $("#valform").validate({
+          rules: {
+            destination_ve: {
+              required: true,
+              minlength: 10
+            },
+            verification: {
+              required: true,
+              minlength: 4
+            }
+          },
+          messages: {
+            destination_ve: {
+              required: "Requerido",
+              minlength: "M\u00EDnimo 10 d\u00EDgitos"
+            },
+            verification: {
+              required: "Requerido",
+              maxlength: "Deben ser por lo menos 4 caracteres"
+            }
+          },
+          errorElement: "span",
+          errorPlacement: function(error, element) {
+            var placement = $(element).data("error");
+            if (placement) {
+              $(placement).append(error);
+            } else {
+              error.insertAfter(element);
+            }
+          },
+            submitHandler: function () {
+
+            var apikey = $("#api_val").val();
+            var formato = $("input[name=group3]:checked").val();
+            var this_dest = $("#destination_ve").val();
+
+            var code = $("#verification").val();
+
+            if (apikey.trim() == "") {
+              swal({
+                title: "Advertencia",
+                text:
+                  "Debes introducir tu ApiKey para poder enviar mensajes",
+                icon: "warning"
+              });
+              return;
+            }
+
+            $.ajax({
+              url: "@Html.Raw(@Url.Action("Validate", "sms"))",
+                data: {
+                    action_cmd: "2fa_validate",
+                    apikey: apikey,
+                    code: code,
+                    dest: this_dest,
+                    formato: formato
+                },
+                method: "post",
+                success: res => {
+                $("#valform")
+                  .get()[0]
+                  .reset();
+                swal({
+                  title: "Mensaje",
+                  text: res,
+                  icon: "info"
+                });
+              }
+            });
+          }
+        });
+
+    </script>
+</body>
+</html>

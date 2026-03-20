@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>API SMSMasivos 2FA</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/2fa.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header-bar">
+        <img src="https://assets.smsmasivos.com.mx/app/live/logo-users/sms-01.svg" alt="SMS Masivos" class="light-logo" width="165" height="50">
+        <a href="/" class="header-link">
+          <i class="fa-light fa-arrow-left-long"></i>
+           Volver a Envío SMS
+        </a>
+      </header>
+      
+      
+  <main>
+    <h2><i class="fa-light fa-shield-keyhole"></i> 2FA / Doble Factor</h2>
+    <div class="tabs-bar">
+      <button class="tab-btn active" data-tab="register">Registro 2FA</button>
+      <button class="tab-btn" data-tab="validate">Validación</button>
+    </div>
+    <div id="register" class="tab-content active">
+      <form id="twofa-form" autocomplete="off">
+        <div class="form-group">
+          <label for="apikey"><i class="fa-light fa-key"></i>API Key</label>
+          <input id="apikey" name="apikey" type="password" required>
+        </div>
+        <div class="form-group">
+          <label for="company"><i class="fa-light fa-building"></i>Nombre de la compañía</label>
+          <input id="company" name="company" type="text" required maxlength="50">
+        </div>
+        <div class="form-group">
+          <label for="phone"><i class="fa-light fa-phone"></i>Número (10 dígitos)</label>
+          <input id="phone" name="phone" type="tel" required pattern="\d{10}" maxlength="10" placeholder="Ej: 4771234567">
+        </div>
+        <div class="form-group">
+          <label for="country_code"><i class="fa-light fa-flag"></i>País</label>
+          <select id="country_code" name="country_code" required>
+            <option value="52" selected>México (+52)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-light fa-hashtag"></i>Longitud de código</label>
+          <select id="code_length" name="code_length">
+            <option value="4" selected>4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label><i class="fa-light fa-file-code"></i>Formato de respuesta</label>
+          <select id="format" name="format">
+            <option value="json" selected>JSON</option>
+            <option value="xml">XML</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit"><i class="fa-light fa-shield-check"></i>Enviar Código</button>
+        </div>
+      </form>
+      <div class="response-message" id="register-response"></div>
+    </div>
+    <div id="validate" class="tab-content">
+      <form id="validate-form" autocomplete="off">
+        <div class="form-group">
+          <label for="apikey_val"><i class="fa-light fa-key"></i>API Key</label>
+          <input id="apikey_val" name="apikey_val" type="password" required>
+        </div>
+        <div class="form-group">
+          <label for="phone_val"><i class="fa-light fa-phone"></i>Número (10 dígitos)</label>
+          <input id="phone_val" name="phone_val" type="tel" required pattern="\d{10}" maxlength="10" placeholder="Ej: 4771234567">
+        </div>
+        <div class="form-group">
+          <label for="verification_code"><i class="fa-light fa-shield-keyhole"></i>Código recibido</label>
+          <input id="verification_code" name="verification_code" type="text" required maxlength="10">
+        </div>
+        <div class="form-group">
+          <label><i class="fa-light fa-file-code"></i>Formato de respuesta</label>
+          <select id="format_val" name="format_val">
+            <option value="json" selected>JSON</option>
+            <option value="xml">XML</option>
+          </select>
+        </div>
+        <div class="form-actions">
+          <button type="submit"><i class="fa-light fa-check"></i> Validar Código</button>
+        </div>
+      </form>
+      <div class="response-message" id="validate-response"></div>
+    </div>
+    <div class="api-warning">
+      Recuerda proteger y cambiar tu API Key regularmente.
+    </div>
+  </main>
+
+  <script>
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(tc => tc.classList.remove('active'));
+        this.classList.add('active');
+        document.getElementById(this.dataset.tab).classList.add('active');
+      });
+    });
+
+    // TAB REGISTRO DE 2FA (enviar código)
+    document.getElementById('twofa-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const apikey = document.getElementById('apikey').value.trim();
+        const company = document.getElementById('company').value.trim();
+        const phone = document.getElementById('phone').value.trim();
+        const country_code = document.getElementById('country_code').value;
+        const code_length = document.getElementById('code_length').value;
+        const format = document.getElementById('format').value;
+
+        const responseDiv = document.getElementById('register-response');
+        responseDiv.style.display = 'none';
+
+        if (!apikey || !company || !phone || !country_code) {
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response-message response-error';
+            responseDiv.textContent = 'Por favor, completa todos los campos obligatorios.';
+            return;
+        }
+
+        try {
+            const res = await fetch('/register_2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    apikey: apikey,
+                    company: company,
+                    phone_number: phone,
+                    country_code: country_code,
+                    code_length: code_length,
+                    format: format
+                })
+            });
+
+            const data = format === 'json' ? await res.json() : await res.text();
+
+            responseDiv.style.display = 'block';
+            if (format === 'json') {
+                if (data.success) {
+                    responseDiv.className = 'response-message response-success';
+                    responseDiv.textContent = data.message || 'Código enviado exitosamente';
+                } else {
+                    responseDiv.className = 'response-message response-error';
+                    responseDiv.textContent = data.message || 'Error en el envío';
+                }
+            } else {
+                // XML: muestra la respuesta en crudo
+                responseDiv.className = 'response-message response-success';
+                responseDiv.textContent = data;
+            }
+        } catch (err) {
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response-message response-error';
+            responseDiv.textContent = 'Error de conexión o API. Intenta nuevamente.';
+        }
+    });
+
+    // TAB VALIDACIÓN DE 2FA (verificar código)
+    document.getElementById('validate-form').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const apikey = document.getElementById('apikey_val').value.trim();
+        const phone = document.getElementById('phone_val').value.trim();
+        const verification_code = document.getElementById('verification_code').value.trim();
+        const format = document.getElementById('format_val').value;
+
+        const responseDiv = document.getElementById('validate-response');
+        responseDiv.style.display = 'none';
+
+        if (!apikey || !phone || !verification_code) {
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response-message response-error';
+            responseDiv.textContent = 'Por favor, completa todos los campos obligatorios.';
+            return;
+        }
+
+        try {
+            const res = await fetch('/validate_2fa', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    cmd: 'validate',
+                    apikey: apikey,
+                    phone_number: phone,
+                    verification_code: verification_code,
+                    format: format
+                })
+            });
+
+            const data = format === 'json' ? await res.json() : await res.text();
+
+            responseDiv.style.display = 'block';
+            if (format === 'json') {
+                if (data.success) {
+                    responseDiv.className = 'response-message response-success';
+                    responseDiv.textContent = data.message || 'Código validado correctamente';
+                } else {
+                    responseDiv.className = 'response-message response-error';
+                    responseDiv.textContent = data.message || 'El código no es válido';
+                }
+            } else {
+                responseDiv.className = 'response-message response-success';
+                responseDiv.textContent = data;
+            }
+        } catch (err) {
+            responseDiv.style.display = 'block';
+            responseDiv.className = 'response-message response-error';
+            responseDiv.textContent = 'Error de conexión o API. Intenta nuevamente.';
+        }
+    });
+
+  </script>
+</body>
+</html>

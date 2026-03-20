@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>API SMSMasivos</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Font Awesome Light (Pro) CDN: requiere licencia FontAwesome Pro -->
+  <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="https://pro.fontawesome.com/releases/v6.0.0-beta3/css/all.css">
+  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap" rel="stylesheet">
+
+</head>
+<body>
+  <header class="header-bar">
+    <img src="https://assets.smsmasivos.com.mx/app/live/logo-users/sms-01.svg" alt="SMS Masivos" class="light-logo" width="165" height="50">
+    <a href="2factorVerification.html" class="header-link">
+      Prueba 2FA 
+      <i class="fa-light fa-arrow-right-long"></i>
+    </a>
+  </header>
+  
+  
+  <main>
+    <h2><i class="fa-light fa-paper-plane"></i> Enviar SMS</h2>
+    <form id="sms-form" autocomplete="off">
+      <div class="form-group">
+        <label for="apikey"><i class="fa-light fa-key"></i>API Key</label>
+        <input id="apikey" name="apikey" type="password" required>
+      </div>
+      <div class="form-group">
+        <label for="numbers"><i class="fa-light fa-phone"></i>Números (separados por coma)</label>
+        <input id="numbers" name="numbers" type="text" required placeholder="Ej: 4771234567,4777654321">
+      </div>
+      <div class="form-group">
+        <label for="message"><i class="fa-light fa-comment-dots"></i>Mensaje</label>
+        <textarea id="message" name="message" maxlength="160" required rows="3" placeholder="Máx. 160 caracteres"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="country_code"><i class="fa-light fa-flag"></i>País</label>
+        <select id="country_code" name="country_code" required>
+          <option value="52" selected>México (+52)</option>
+        </select>
+      </div>
+      <div class="checkbox-group">
+        <input type="checkbox" id="sandbox" name="sandbox">
+        <label for="sandbox" style="margin:0;cursor:pointer;">Modo Sandbox</label>
+      </div>
+      <div class="form-actions">
+        <button type="submit"><i class="fa-light fa-paper-plane"></i>Enviar</button>
+      </div>
+    </form>
+    <div class="response-message" id="response"></div>
+    <div class="api-warning">
+      Recuerda proteger y cambiar tu API Key regularmente.
+    </div>
+  </main>
+  <script>
+    document.getElementById('sms-form').addEventListener('submit', async function(e) {
+      e.preventDefault();
+    
+      const apikey = document.getElementById('apikey').value.trim();
+      const numbers = document.getElementById('numbers').value.trim();
+      const message = document.getElementById('message').value.trim();
+      const country_code = document.getElementById('country_code').value;
+      const sandbox = document.getElementById('sandbox').checked ? 1 : 0;
+      const responseDiv = document.getElementById('response');
+    
+      if (!apikey || !numbers || !message) {
+        responseDiv.style.display = 'block';
+        responseDiv.className = 'response-message response-error';
+        responseDiv.textContent = 'Por favor, completa todos los campos obligatorios.';
+        return;
+      }
+    
+      // Envío de datos al backend (controlador PHP)
+      try {
+        responseDiv.style.display = 'none';
+        const res = await fetch('./controllers/send_sms.php', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: new URLSearchParams({
+            apikey, numbers, message, country_code, sandbox, cmd: 'send'
+          })
+        });
+
+        const data = await res.json();
+        responseDiv.style.display = 'block';
+        if (data.success) {
+          responseDiv.className = 'response-message response-success';
+          responseDiv.textContent = data.message || 'Enviado correctamente';
+        } else {
+          responseDiv.className = 'response-message response-error';
+          responseDiv.textContent = data.message || 'Error en el envío';
+        }
+      } catch (err) {
+        responseDiv.style.display = 'block';
+        responseDiv.className = 'response-message response-error';
+        responseDiv.textContent = 'Error de conexión o API. Intenta nuevamente.';
+      }
+    });
+  </script>
+</body>
+</html>

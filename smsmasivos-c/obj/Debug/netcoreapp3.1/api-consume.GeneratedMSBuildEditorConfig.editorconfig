@@ -1,0 +1,3 @@
+is_global = true
+build_property.RootNamespace = api_consume
+build_property.ProjectDir = /Applications/MAMP/htdocs/api-consume/api-consume/

@@ -1,0 +1,191 @@
+﻿
+<header style="background:linear-gradient(to left, #14477e, #5bcbf4);">
+    <span class="right"><img src="/Content/img/logo-icon.png" alt="MASIVOS" width="25" /></span><span class="right"><img src="/Content/img/logo-text.png" alt="SMS" width="200" /></span>
+</header>
+
+<div class="container">
+    <div class="row">
+        <div class="col s12 m12">
+            <h4 style="color:#14477e;">
+                2. Autenticaci&oacute;n de doble factor
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col s12 m12">
+            <div class="card">
+                <div class="card-content">
+                    <div class="row">
+                        <ul id="tabs-swipe-demo" class="tabs">
+                            <li class="tab col s6">
+                                <a class="active" href="#reg-tab">Registro</a>
+                            </li>
+                            <li class="tab col s6">
+                                <a href="#validation-tab">Validaci&oacute;n</a>
+                            </li>
+                        </ul>
+                        <div id="reg-tab" class="col s12">
+                            <br>
+                            <form class="col s12 m12"
+                                  id="regform">
+
+                                <div class="input-field col s12 m12">
+                                    <i class="material-icons prefix ">vpn_key</i>
+                                    <input id="api" type="text" name="api" />
+                                    <label for="api">apikey</label>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <i class="material-icons prefix ">list</i>
+                                    <input id="nombre" type="text" name="api" />
+                                    <label for="nombre">Nombre de la compa&ntilde;ia</label>
+                                </div>
+
+                                <div class="input-field col s4 m4">
+                                    <i class="material-icons prefix ">phone</i>
+                                    <select id="country">
+                                        <option value="52" data-icon="/Content/img/mexico.svg">52</option>
+                                        <option value="1" data-icon="/Content/img/estados-unidos.svg">1</option>
+                                        <option value="18" data-icon="/Content/img/republica-dominicana.svg">18</option>
+                                        <option value="34" data-icon="/Content/img/espana.svg">34</option>
+                                        <option value="51" data-icon="/Content/img/peru.svg">51</option>
+                                        <option value="53" data-icon="/Content/img/cuba.svg">53</option>
+                                        <option value="54" data-icon="/Content/img/argentina.svg">54</option>
+                                        <option value="55" data-icon="/Content/img/brasil.svg">55</option>
+                                        <option value="56" data-icon="/Content/img/chile.svg">56</option>
+                                        <option value="57" data-icon="/Content/img/colombia.svg">57</option>
+                                        <option value="58" data-icon="/Content/img/venezuela.svg">58</option>
+                                        <option value="502" data-icon="/Content/img/guatemala.svg">502</option>
+                                        <option value="503" data-icon="/Content/img/el-salvador.svg">503</option>
+                                        <option value="504" data-icon="/Content/img/honduras.svg">504</option>
+                                        <option value="505" data-icon="/Content/img/nicaragua.svg">505</option>
+                                        <option value="506" data-icon="/Content/img/costa-rica.svg">506</option>
+                                        <option value="507" data-icon="/Content/img/panama.svg">507</option>
+                                        <option value="591" data-icon="/Content/img/bolivia.svg">591</option>
+                                        <option value="593" data-icon="/Content/img/ecuador.svg">593</option>
+                                        <option value="598" data-icon="/Content/img/uruguay.svg">598</option>
+
+                                    </select>
+
+                                </div>
+
+                                <div class="input-field col s8 m8">
+                                    <input id="destination" type="tel" name="destination" />
+                                    <label for="destination">Destinatario</label>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <h6>Longitud de c&oacute;digo</h6>
+                                    <p>
+                                        <label>
+                                            <input name="group1" type="radio" value="4" checked />
+                                            <span>4</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label>
+                                            <input name="group1" type="radio" value="5" />
+                                            <span>5</span>
+                                        </label>
+                                    </p>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <h6>Formato</h6>
+                                    <p>
+                                        <label>
+                                            <input name="group2" type="radio" value="json" checked />
+                                            <span>JSON</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label>
+                                            <input name="group2" type="radio" value="xml" />
+                                            <span>XML</span>
+                                        </label>
+                                    </p>
+                                </div>
+                            </form>
+                            <div class="col s12 m12 center">
+                                <button class="btn waves-effect waves-light blue darken-1"
+                                        type="submit"
+                                        name="action"
+                                        form="regform">
+                                    Enviar
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                        </div>
+
+
+
+                        <div id="validation-tab" class="col s12">
+                            <br>
+                            <form class="col s12 m12"
+                                  id="valform">
+
+                                <div class="input-field col s12 m12">
+                                    <i class="material-icons prefix ">vpn_key</i>
+                                    <input id="api_val" type="text" name="api_cal" />
+                                    <label for="api_val">Apikey</label>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <i class="material-icons prefix ">phone</i>
+                                    <input id="destination_ve" type="tel"
+                                           name="destination_ve" />
+                                    <label for="destination">Destinatario</label>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <i class="material-icons prefix ">edit</i>
+                                    <input id="verification" type="text"
+                                           name="verification" />
+                                    <label for="verification">C&oacute;digo de verificaci&oacute;n</label>
+                                </div>
+
+                                <div class="input-field col s12 m12">
+                                    <h6>Formato</h6>
+                                    <p>
+                                        <label>
+                                            <input name="group3" type="radio" value="json" checked />
+                                            <span>JSON</span>
+                                        </label>
+                                    </p>
+                                    <p>
+                                        <label>
+                                            <input name="group3" type="radio" value="xml" />
+                                            <span>XML</span>
+                                        </label>
+                                    </p>
+                                </div>
+                            </form>
+                            <div class="col s12 m12 center">
+                                <button class="btn waves-effect waves-light blue darken-1"
+                                        type="submit"
+                                        name="action"
+                                        form="valform">
+                                    Validar
+                                    <i class="material-icons right">check</i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row w">
+        <div class="col s6 m6 offset-s3 offset-m3">
+            <h6 class="valign-wrapper center-align">
+                <i class="material-icons">warning</i>&nbsp;&nbsp; Por favor,
+                recuerda cambiar tu api key
+            </h6>
+        </div>
+    </div>
+
+</div>
+
+
