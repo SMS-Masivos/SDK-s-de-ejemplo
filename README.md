@@ -18,4 +18,4 @@ Ejemplos de librerías de consumo para la API de [SMS Masivos](https://www.smsma
 
 ## Documentación
 
-Consulta la documentación completa de la API en [smsmasivos.com.mx/api-docs](https://www.smsmasivos.com.mx/api-docs/).
+Consulta la documentación completa de la API en [app.smsmasivos.com.mx/api-docs/v2](https://app.smsmasivos.com.mx/api-docs/v2).
