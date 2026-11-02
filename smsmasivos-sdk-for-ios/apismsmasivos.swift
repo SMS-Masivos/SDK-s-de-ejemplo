@@ -134,7 +134,7 @@ public class apismsmasivos {
         - end_date: Fecha de fin para filtrar el reporte de los mensajes enviados entre el rango de fechas definida.
         - sandbox: Para enviar SMS en modo de pruebas indica este atributo con true. En caso contrario el mensaje será enviado y descontado de tu crédito. Por defecto false.
         - lang: Idioma de la respuesta. Por defecto 'es'.
-        - cursor: Para pedir la página siguiente, el valor de `pagination.next_cursor` de la respuesta anterior. Sin él se obtiene la primera página (hasta 10,000 mensajes).
+        - cursor: Para pedir la página siguiente, el valor de `pagination.next_cursor` de la respuesta anterior, con las mismas fechas. Sin él se obtiene la primera página (hasta 10,000 mensajes; si un mismo segundo tiene más, se incluye completo). Cada página cuenta como una de las 10 peticiones de reporte del día.
         - completion: Funcion de finalizacion, devolvuelve la respuesta del servidor y un informe de error.
             * Data: Respuesta del servidor contenida en un objeto NSDictionary. `pagination.has_more` indica si hay otra página.
             * Error: Objeto Error con informacion del problema.
