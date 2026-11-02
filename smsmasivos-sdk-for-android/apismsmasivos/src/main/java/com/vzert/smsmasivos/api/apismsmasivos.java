@@ -52,12 +52,25 @@ public class apismsmasivos {
     }
 
     public void getReports(String apikey, String start_date, String end_date, String language, String sandbox, Callback callback) {
+        getReports(apikey, start_date, end_date, language, sandbox, null, callback);
+    }
+
+    /**
+     * Igual que getReports sin cursor, pero permite pedir la página siguiente del reporte.
+     *
+     * @param cursor El valor de getPagination().getNextCursor() de la respuesta anterior, con las mismas fechas.
+     *               Con null o vacío se obtiene la primera página (hasta 10,000 mensajes; si un mismo segundo
+     *               tiene más, se incluye completo). Cada página cuenta como una de las 10 peticiones de reporte del día.
+     *               getPagination() es null cuando la respuesta es de error: revisa getSuccess() antes.
+     */
+    public void getReports(String apikey, String start_date, String end_date, String language, String sandbox, String cursor, Callback callback) {
 
         Map<String, String> params = new HashMap();
         params.put("start_date", start_date);
         params.put("end_date", end_date);
         params.put("lang", validLanguage(language));
         params.put("sandbox", validSandbox(sandbox));
+        if (validEmpty(cursor)) params.put("cursor", cursor);
 
         Map<String,String> v = validReports(params);
         if (v.get("success").equals("true")) {
