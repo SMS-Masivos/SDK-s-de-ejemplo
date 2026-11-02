@@ -7,6 +7,7 @@ public class Reports {
     private int status;
     private String code;
     private Object report;
+    private Pagination pagination;
 
     public String getSuccess() {
         return success;
@@ -26,6 +27,25 @@ public class Reports {
 
     public Object getReport() {
         return report;
+    }
+
+    public Pagination getPagination() {
+        return pagination;
+    }
+
+    public static class Pagination {
+
+        private boolean has_more;
+        private String next_cursor;
+
+        public boolean getHasMore() {
+            return has_more;
+        }
+
+        public String getNextCursor() {
+            return next_cursor;
+        }
+
     }
 
 }

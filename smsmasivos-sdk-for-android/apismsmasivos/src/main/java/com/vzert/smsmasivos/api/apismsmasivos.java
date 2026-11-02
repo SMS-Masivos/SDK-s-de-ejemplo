@@ -52,12 +52,17 @@ public class apismsmasivos {
     }
 
     public void getReports(String apikey, String start_date, String end_date, String language, String sandbox, Callback callback) {
+        getReports(apikey, start_date, end_date, language, sandbox, null, callback);
+    }
+
+    public void getReports(String apikey, String start_date, String end_date, String language, String sandbox, String cursor, Callback callback) {
 
         Map<String, String> params = new HashMap();
         params.put("start_date", start_date);
         params.put("end_date", end_date);
         params.put("lang", validLanguage(language));
         params.put("sandbox", validSandbox(sandbox));
+        if (validEmpty(cursor)) params.put("cursor", cursor);
 
         Map<String,String> v = validReports(params);
         if (v.get("success").equals("true")) {

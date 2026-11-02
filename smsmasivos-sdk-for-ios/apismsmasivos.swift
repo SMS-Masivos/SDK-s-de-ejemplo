@@ -52,6 +52,7 @@ public class apismsmasivos {
         let end_date: String
         let lang: String
         let sandbox: Bool
+        let cursor: String?
     }
     
     struct Registry: Codable {
@@ -133,17 +134,18 @@ public class apismsmasivos {
         - end_date: Fecha de fin para filtrar el reporte de los mensajes enviados entre el rango de fechas definida.
         - sandbox: Para enviar SMS en modo de pruebas indica este atributo con true. En caso contrario el mensaje será enviado y descontado de tu crédito. Por defecto false.
         - lang: Idioma de la respuesta. Por defecto 'es'.
+        - cursor: Para pedir la página siguiente, el valor de `pagination.next_cursor` de la respuesta anterior. Sin él se obtiene la primera página (hasta 10,000 mensajes).
         - completion: Funcion de finalizacion, devolvuelve la respuesta del servidor y un informe de error.
-            * Data: Respuesta del servidor contenida en un objeto NSDictionary
+            * Data: Respuesta del servidor contenida en un objeto NSDictionary. `pagination.has_more` indica si hay otra página.
             * Error: Objeto Error con informacion del problema.
      */
-    public func getReports(start_date:Date, end_date:Date, lang:String = "es", sandbox:Bool = true, completion:((NSDictionary?, Error?) -> Void)?){
+    public func getReports(start_date:Date, end_date:Date, lang:String = "es", sandbox:Bool = true, cursor:String? = nil, completion:((NSDictionary?, Error?) -> Void)?){
         let path = "/reports/generate/"
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         let encoder = JSONEncoder()
         do {
-            let jsonData = try encoder.encode(Report(start_date: dateFormatter.string(from: start_date), end_date: dateFormatter.string(from: end_date), lang: self.lang, sandbox: sandbox))
+            let jsonData = try encoder.encode(Report(start_date: dateFormatter.string(from: start_date), end_date: dateFormatter.string(from: end_date), lang: self.lang, sandbox: sandbox, cursor: cursor))
             precessRequest(path, jsonData) { (data, error) in
                 completion?(data, error)
             }
